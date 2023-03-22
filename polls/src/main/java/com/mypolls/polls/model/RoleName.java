@@ -1,4 +1,4 @@
-package com.mypolls.polls.models;
+package com.mypolls.polls.model;
 
 public enum RoleName {
     ROLE_USER,

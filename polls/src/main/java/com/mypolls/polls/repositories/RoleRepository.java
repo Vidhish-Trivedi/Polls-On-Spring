@@ -1,9 +1,10 @@
 package com.mypolls.polls.repositories;
 
-import com.mypolls.polls.models.Role;
-import com.mypolls.polls.models.RoleName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.mypolls.polls.model.Role;
+import com.mypolls.polls.model.RoleName;
 
 import java.util.Optional;
 

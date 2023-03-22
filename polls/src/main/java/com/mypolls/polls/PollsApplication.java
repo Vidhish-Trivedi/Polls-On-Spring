@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
-import jakarta.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 
 @SpringBootApplication
 @EntityScan(basePackageClasses = {
