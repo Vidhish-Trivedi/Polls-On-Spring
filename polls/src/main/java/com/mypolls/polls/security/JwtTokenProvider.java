@@ -1,7 +1,10 @@
 package com.mypolls.polls.security;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +20,7 @@ public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     @Value("${app.jwtSecret}")
-    private Key jwtSecret;
+    private String jwtSecret;
 
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationInMs;
@@ -28,12 +31,18 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + this.jwtExpirationInMs);
 
+        // Stackoverflow reference:
+        // decode the base64 encoded string
+        byte[] decodedKey = Base64.getDecoder().decode(this.jwtSecret);
+        // rebuild key using SecretKeySpec
+        Key originalKey = new SecretKeySpec(decodedKey, "AES");
+
         return (
             Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiry)
-                .signWith(jwtSecret, SignatureAlgorithm.HS512)
+                .signWith(originalKey, SignatureAlgorithm.HS512)
                 .compact()
         );
     }
