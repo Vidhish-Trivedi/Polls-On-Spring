@@ -1,10 +1,7 @@
 package com.mypolls.polls.security;
 
-import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-
-import javax.crypto.spec.SecretKeySpec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 
 @Component
@@ -34,15 +32,13 @@ public class JwtTokenProvider {
         // Stackoverflow reference:
         // decode the base64 encoded string
         byte[] decodedKey = Base64.getDecoder().decode(this.jwtSecret);
-        // rebuild key using SecretKeySpec
-        Key originalKey = new SecretKeySpec(decodedKey, "AES");
 
         return (
             Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiry)
-                .signWith(originalKey, SignatureAlgorithm.HS512)
+                .signWith(Keys.hmacShaKeyFor(decodedKey), SignatureAlgorithm.HS512)
                 .compact()
         );
     }
