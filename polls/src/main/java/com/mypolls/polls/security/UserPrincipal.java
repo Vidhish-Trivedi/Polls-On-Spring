@@ -62,7 +62,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return(this.password);
+        return(this.password.toString());
     }
 
     @Override

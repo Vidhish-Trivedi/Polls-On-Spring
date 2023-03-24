@@ -47,7 +47,7 @@ public class User extends DateAudit {
     private String email;       // Unique.
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 64)
     private String password;    // Encrypted when stored.
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -63,12 +63,11 @@ public class User extends DateAudit {
     }
 
 
-    public User(String name, String username, String email, String password, Set <Role> roles) {
+    public User(String name, String username, String email, String password) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.roles = roles;
     }
 
 
