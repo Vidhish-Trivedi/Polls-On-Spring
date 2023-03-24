@@ -22,11 +22,11 @@ import javax.persistence.MappedSuperclass;
 
 public abstract class DateAudit implements Serializable {
     @CreatedDate
-    // @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
-    // @Column(nullable = false)
+    @Column(nullable = false)
     private Instant updatedAt;
 
     public Instant getCreatedAt(){
