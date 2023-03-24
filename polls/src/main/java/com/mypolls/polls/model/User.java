@@ -47,7 +47,7 @@ public class User extends DateAudit {
     private String email;       // Unique.
 
     @NotBlank
-    @Size(max = 64)
+    @Size(max = 100)
     private String password;    // Encrypted when stored.
 
     @ManyToMany(fetch = FetchType.LAZY)
