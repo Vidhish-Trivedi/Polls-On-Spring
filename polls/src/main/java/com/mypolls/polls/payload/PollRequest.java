@@ -7,6 +7,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.mypolls.polls.model.ChoiceRequest;
+import com.mypolls.polls.model.PollLength;
+
 public class PollRequest {
     @NotBlank
     @Size(max = 256)
