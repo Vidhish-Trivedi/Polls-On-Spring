@@ -20,7 +20,7 @@ import com.mypolls.polls.model.audit.UserDateAudit;
 public class Poll extends UserDateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @NotBlank
     @Size(max = 256)
@@ -42,11 +42,11 @@ public class Poll extends UserDateAudit {
 
 
     public Long getId() {
-        return this.Id;
+        return this.id;
     }
 
     public void setId(Long Id) {
-        this.Id = Id;
+        this.id = Id;
     }
 
     public String getQuestion() {
