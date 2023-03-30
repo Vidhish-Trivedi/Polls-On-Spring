@@ -64,16 +64,15 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity <?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
-        // TODO: Check Warnings ?
         if(this.userRepository.existsByUsername(signupRequest.getUsername())) {
             return(
-                new ResponseEntity (new ApiResponse(false, "Username is already taken!"),HttpStatus.BAD_REQUEST)
+                new ResponseEntity <> (new ApiResponse(false, "Username is already taken!"),HttpStatus.BAD_REQUEST)
             );
         }
 
         if(this.userRepository.existsByEmail(signupRequest.getEmail())) {
             return(
-                new ResponseEntity (new ApiResponse(false, "Email is already in use!"), HttpStatus.BAD_REQUEST)
+                new ResponseEntity <> (new ApiResponse(false, "Email is already in use!"), HttpStatus.BAD_REQUEST)
             );
         }
     
