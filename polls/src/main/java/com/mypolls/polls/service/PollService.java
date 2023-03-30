@@ -208,4 +208,69 @@ public class PollService {
         );
     }
 
+    public PagedResponse <PollResponse> getPollsCreatedBy(String username, UserPrincipal currentUser, int page, int size) {
+        validatePageNumberAndSize(page, size);
+
+        User user = userRepository.findByUsername(username).orElseThrow(()-> new ResourceNotFoundException("User", "username", username));
+
+        // Get all polls created by user with username.
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
+        Page <Poll> polls = pollRepository.findByCreatedBy(user.getId(), pageable);
+
+        if(polls.getNumberOfElements() == 0) {
+            return(
+                new PagedResponse <> (Collections.emptyList(), polls.getNumber(), polls.getSize(), polls.getTotalElements(), polls.getTotalPages(), polls.isLast())
+            );
+        }
+
+
+        List <Long> pollIds = polls.map(Poll::getId).getContent();
+        Map <Long, Long> choiceVoteCountMap = getChoiceVoteCountMap(pollIds);
+        Map <Long, Long> pollUserVoteMap = getPollUserVoteMap(currentUser, pollIds);
+
+        List <PollResponse> pollResponses = polls.map(poll -> {
+            return(
+                ModelMapper.mapPollToPollResponse(poll, choiceVoteCountMap, user, pollUserVoteMap == null ? null : pollUserVoteMap.getOrDefault(poll.getId(), null))
+            );
+        }).getContent();
+
+        return(
+            new PagedResponse <> (pollResponses, polls.getNumber(), polls.getSize(), polls.getTotalElements(), polls.getTotalPages(), polls.isLast())
+        );
+    }
+
+    public PagedResponse <PollResponse> getPollsVotedBy(String username, UserPrincipal currentUser, int page, int size) {
+        validatePageNumberAndSize(page, size);
+
+        User user = userRepository.findByUsername(username).orElseThrow(()-> new ResourceNotFoundException("User", "username", username));
+
+        // Get all polls created by user with username.
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
+        Page <Long> userVotedPollIds = voteRepository.findVotedPollIdsByUserId(user.getId(), pageable);
+
+        if(userVotedPollIds.getNumberOfElements() == 0) {
+            return(
+                new PagedResponse <> (Collections.emptyList(), userVotedPollIds.getNumber(), userVotedPollIds.getSize(), userVotedPollIds.getTotalElements(), userVotedPollIds.getTotalPages(), userVotedPollIds.isLast())
+            );
+        }
+
+
+        List <Long> pollIds = userVotedPollIds.getContent();
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        List <Poll> polls = pollRepository.findByIdIn(pollIds, sort);
+
+        Map <Long, Long> choiceVoteCountMap = getChoiceVoteCountMap(pollIds);
+        Map <Long, Long> pollUserVoteMap = getPollUserVoteMap(currentUser, pollIds);
+        Map <Long, User> creatorMap = getPollCreatorMap(polls);
+
+        List <PollResponse> pollResponses = polls.stream().map(poll -> {
+            return(
+                ModelMapper.mapPollToPollResponse(poll, choiceVoteCountMap, creatorMap.get(poll.getCreatedBy()), pollUserVoteMap == null ? null : pollUserVoteMap.getOrDefault(poll.getId(), null))
+            );
+        }).collect(Collectors.toList());
+
+        return(
+            new PagedResponse <> (pollResponses, userVotedPollIds.getNumber(), userVotedPollIds.getSize(), userVotedPollIds.getTotalElements(), userVotedPollIds.getTotalPages(), userVotedPollIds.isLast())
+        );
+    }
 }
