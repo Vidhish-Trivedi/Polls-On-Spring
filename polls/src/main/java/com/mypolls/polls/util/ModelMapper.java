@@ -12,7 +12,7 @@ import com.mypolls.polls.payload.PollResponse;
 import com.mypolls.polls.payload.UserSummary;
 
 public class ModelMapper {
-    public static PollResponse mapPollToPollResponse(Poll poll, Map <Long, Long> choiceVotesMap, User creator, Long userVote) {
+    public static PollResponse mapPollToPollResponse(Poll poll, Map <Long, Long> choiceVotesMap, User creator, Long userVoteId) {
         PollResponse pollResponse = new PollResponse();
         pollResponse.setId(poll.getId());
         pollResponse.setQuestion(poll.getQuestion());
@@ -40,8 +40,8 @@ public class ModelMapper {
         UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getName());
         pollResponse.setCreatedBy(creatorSummary);
 
-        if(userVote != null) {
-            pollResponse.setSelectedChoice(userVote);
+        if(userVoteId != null) {
+            pollResponse.setSelectedChoice(userVoteId);
         }
 
         Long totalVotes = pollResponse.getChoices().stream().mapToLong(ChoiceResponse::getVoteCount).sum();
