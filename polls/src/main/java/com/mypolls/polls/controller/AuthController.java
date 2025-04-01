@@ -50,50 +50,45 @@ public class AuthController {
     JwtTokenProvider tokenProvider;
 
     @PostMapping("/login")
-    public ResponseEntity <?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = this.authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword())
-        );
-   
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword()));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = this.tokenProvider.generateToken(authentication);
+        return (ResponseEntity.ok(new JwtAuthenticationResponse(jwt)));
 
-        return(ResponseEntity.ok(new JwtAuthenticationResponse(jwt)));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity <?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
-        if(this.userRepository.existsByUsername(signupRequest.getUsername())) {
-            return(
-                new ResponseEntity <> (new ApiResponse(false, "Username is already taken!"),HttpStatus.BAD_REQUEST)
-            );
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+        if (this.userRepository.existsByUsername(signupRequest.getUsername())) {
+            return (new ResponseEntity<>(new ApiResponse(false, "Username is already taken!"), HttpStatus.BAD_REQUEST));
         }
 
-        if(this.userRepository.existsByEmail(signupRequest.getEmail())) {
-            return(
-                new ResponseEntity <> (new ApiResponse(false, "Email is already in use!"), HttpStatus.BAD_REQUEST)
-            );
+        if (this.userRepository.existsByEmail(signupRequest.getEmail())) {
+            return (new ResponseEntity<>(new ApiResponse(false, "Email is already in use!"), HttpStatus.BAD_REQUEST));
         }
-    
+
         // Else, create a new user account.
-        User user = new User(signupRequest.getName(), signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
-
+        User user = new User(signupRequest.getName(), signupRequest.getUsername(), signupRequest.getEmail(),
+                signupRequest.getPassword());
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
 
         // System.out.println("---------------" + user.getPassword().length());
-        
+
         Role userRole = this.roleRepository.findByName(RoleName.ROLE_USER)
-                                            .orElseThrow(() -> new AppException("User role not set"));
+                .orElseThrow(() -> new AppException("User role not set"));
 
         user.setRoles(Collections.singleton(userRole));
 
         User result = this.userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/{username}")
-                                                                            .buildAndExpand(result.getUsername())
-                                                                            .toUri();
-        
-        return(ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully!")));
+                .buildAndExpand(result.getUsername())
+                .toUri();
+
+        return (ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully!")));
     }
 }

@@ -1,7 +1,5 @@
 package com.mypolls.polls.controller;
 
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,7 +67,7 @@ public class UserController {
         return(userProfile);
     }
 
-    // Get all polls created by logged-in user.
+    // Get all polls created by a user.
     @GetMapping("/users/{username}/polls")
     public PagedResponse <PollResponse> getPollsByCreatedBy(@PathVariable(value = "username") String username,
                                                             @CurrentUser UserPrincipal currentUser,
@@ -81,7 +79,7 @@ public class UserController {
                                                             );
                                                         }
                                     
-    // Get all polls in which the logged-in user has voted.
+    // Get all polls in which the a user has voted.
     @GetMapping("/users/{username}/votes")
     public PagedResponse <PollResponse> getPollsVotedBy(@PathVariable(value = "username") String username,
                                                         @CurrentUser UserPrincipal currentUser,

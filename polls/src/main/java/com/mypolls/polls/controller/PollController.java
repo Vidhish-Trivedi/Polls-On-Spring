@@ -4,8 +4,6 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,9 +22,6 @@ import com.mypolls.polls.model.VoteRequest;
 import com.mypolls.polls.payload.ApiResponse;
 import com.mypolls.polls.payload.PollRequest;
 import com.mypolls.polls.payload.PollResponse;
-// import com.mypolls.polls.repositories.PollRepository;
-// import com.mypolls.polls.repositories.UserRepository;
-// import com.mypolls.polls.repositories.VoteRepository;
 import com.mypolls.polls.security.CurrentUser;
 import com.mypolls.polls.security.UserPrincipal;
 import com.mypolls.polls.service.PollService;
@@ -35,19 +30,9 @@ import com.mypolls.polls.util.AppConstants;
 @RestController
 @RequestMapping("api/polls")
 public class PollController {
-    // @Autowired
-    // private PollRepository pollRepository;
-
-    // @Autowired
-    // private VoteRepository voteRepository;
-
-    // @Autowired
-    // private UserRepository userRepository;
 
     @Autowired
     private PollService pollService;
-
-    // private static Logger logger = LoggerFactory.getLogger(PollController.class);
 
     @GetMapping
     public PagedResponse <PollResponse> getPolls(@CurrentUser UserPrincipal currentUser,
